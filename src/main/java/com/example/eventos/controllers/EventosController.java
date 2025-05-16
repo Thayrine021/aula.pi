@@ -13,7 +13,7 @@ public class EventosController {
 
     @GetMapping("/form")
     public String form() {
-        return "formevento";
+        return "eventos/formevento";
     }
 
     @PostMapping
@@ -22,6 +22,6 @@ public class EventosController {
         System.out.println("Local: " + evento.getLocal());
         System.out.println("Data: " + evento.getData());
         System.out.println("Horário: " + evento.getHorario());
-        return "eventoConfirmado";
+        return "eventos/eventoConfirmado";
     }
 }
