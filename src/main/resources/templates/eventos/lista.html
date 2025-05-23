@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
@@ -12,7 +11,7 @@
 	<div class="container">
 	<h1>Lista de eventos</h1>
 
-	<table>
+	<table class="highLight">
 	
 		<thead>
 			<tr>
@@ -27,7 +26,7 @@
 		<tbody>
 			<tr th:each="e : ${eventos}">
                 <td th:text="${e.id}">1</td>
-                <td> <a th: href="@{/eventos{id}(id=${e.id)}"><span th:text="${e.nome}">Aniversário de João</span></a> </td>
+                <td> <a th:href="@{/eventos/{id}(id=${e.id})}"><span th:text="${e.nome}">Aniversário de João</span></a> </td>
                 <td th:text="${e.local}">Clube</td>
                 <td th:text="${e.data}">20/05/2025</td>
                 <td th:text="${e.horario}">19:00</td>
@@ -35,6 +34,6 @@
 		</tbody>
 	
 	</table>
-	
+	</div>
 </body>
 </html>
