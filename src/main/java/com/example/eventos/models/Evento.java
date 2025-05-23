@@ -1,7 +1,13 @@
 package com.example.eventos.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 
 public class Evento {
+
+	@Id
 	private Long id;
 	private String nome;
 	private String local;
