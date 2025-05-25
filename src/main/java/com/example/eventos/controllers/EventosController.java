@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,8 @@ import com.example.eventos.models.Convidado;
 import com.example.eventos.models.Evento;
 import com.example.eventos.repositories.ConvidadoRepository;
 import com.example.eventos.repositories.EventosRepository;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/eventos")
@@ -37,7 +40,11 @@ public class EventosController {
     }
 
     @PostMapping
-    public String salvar(Evento evento) {
+    public String salvar(@Valid Evento evento, BindingResult result) {
+    	
+    	if(result.hasErrors()) {
+    		return form(evento);
+    	}
         er.save(evento);
         return "redirect:/eventos/eventoConfirmado";
     }
@@ -73,12 +80,17 @@ public class EventosController {
     }
 
     @PostMapping("/detalhes/{idEvento}")
-    public String salvarConvidado(@PathVariable Long idEvento, Convidado convidado) {
+    public String salvarConvidado(@PathVariable Long idEvento, Convidado convidado, BindingResult result) {
         Optional<Evento> opt = er.findById(idEvento);
+        
+        if(result.hasErrors()){
+        	return apagarConvidado(idEvento);
+        }
 
         if (opt.isEmpty()) {
             return "redirect:/eventos";
         }
+        
 
         Evento evento = opt.get();
         convidado.setEvento(evento);
