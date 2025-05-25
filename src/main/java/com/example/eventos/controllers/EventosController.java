@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.eventos.models.Convidado;
 import com.example.eventos.models.Evento;
@@ -40,13 +41,16 @@ public class EventosController {
     }
 
     @PostMapping
-    public String salvar(@Valid Evento evento, BindingResult result) {
+    public String salvar(@Valid Evento evento, BindingResult result, RedirectAttributes attributes) {
     	
     	if(result.hasErrors()) {
     		return form(evento);
     	}
+    	System.out.println(evento);
         er.save(evento);
-        return "redirect:/eventos/eventoConfirmado";
+        attributes.addFlashAttribute("mensagem", "Evento salvo com sucesso!");
+        
+        return "redirect:/eventos";
     }
 
     @GetMapping
@@ -80,7 +84,7 @@ public class EventosController {
     }
 
     @PostMapping("/detalhes/{idEvento}")
-    public String salvarConvidado(@PathVariable Long idEvento, Convidado convidado, BindingResult result) {
+    public String salvarConvidado(@PathVariable Long idEvento, Convidado convidado, BindingResult result, RedirectAttributes attributes) {
         Optional<Evento> opt = er.findById(idEvento);
         
         if(result.hasErrors()){
@@ -96,6 +100,7 @@ public class EventosController {
         convidado.setEvento(evento);
 
         cr.save(convidado);
+        attributes.addFlashAttribute("mensagemConvidado", "Convidado(a) adicionado(a) com sucesso!");
 
         return "redirect:/eventos/detalhes/" + idEvento;
     }
@@ -145,7 +150,7 @@ public class EventosController {
     }
 
     @GetMapping("/{id}/remover")
-    public String apagarEvento(@PathVariable Long id) {
+    public String apagarEvento(@PathVariable Long id, RedirectAttributes attributes) {
         Optional<Evento> opt = er.findById(id);
 
         if (opt.isPresent()) {
@@ -153,6 +158,7 @@ public class EventosController {
             List<Convidado> convidados = cr.findByEvento(evento);
             cr.deleteAll(convidados);
             er.delete(evento);
+            attributes.addFlashAttribute("mensagem", "Evento removido com sucesso!");
         }
 
         return "redirect:/eventos";
