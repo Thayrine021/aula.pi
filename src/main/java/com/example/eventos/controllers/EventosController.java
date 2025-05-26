@@ -88,9 +88,9 @@ public class EventosController {
         Optional<Evento> opt = er.findById(idEvento);
         
         if(result.hasErrors()){
-        	return apagarConvidado(idEvento);
+        	return apagarConvidado(idEvento, attributes);
         }
-
+        
         if (opt.isEmpty()) {
             return "redirect:/eventos";
         }
@@ -104,6 +104,7 @@ public class EventosController {
 
         return "redirect:/eventos/detalhes/" + idEvento;
     }
+
 
     @GetMapping("/{id}/selecionar")
     public ModelAndView selecionarEvento(@PathVariable Long id) {
@@ -165,13 +166,14 @@ public class EventosController {
     }
 
     @GetMapping("/{id}/removerConvidado")
-    public String apagarConvidado(@PathVariable Long id) {
+    public String apagarConvidado(@PathVariable Long id,  RedirectAttributes attributes) {
         Optional<Convidado> opt = cr.findById(id);
 
         if (opt.isPresent()) {
             Convidado convidado = opt.get();
             Long idEvento = convidado.getEvento().getId();
             cr.delete(convidado);
+            attributes.addFlashAttribute("mensagem", "Convidado removido com sucesso!");
             return "redirect:/eventos/detalhes/" + idEvento;
         }
 
