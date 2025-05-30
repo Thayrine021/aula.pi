@@ -61,10 +61,10 @@ public class EventosController {
         return mv;
     }
 
-    @GetMapping("/detalhes/{id}")
-    public ModelAndView detalhar(@PathVariable Long id, Convidado convidado) {
+    @GetMapping("/detalhes/{idEvento}")
+    public ModelAndView detalhar(@PathVariable Long idEvento, Convidado convidado) {
         ModelAndView md = new ModelAndView();
-        Optional<Evento> opt = er.findById(id);
+        Optional<Evento> opt = er.findById(idEvento);
 
         if (opt.isEmpty()) {
             md.setViewName("redirect:/eventos");
@@ -88,20 +88,24 @@ public class EventosController {
         Optional<Evento> opt = er.findById(idEvento);
         
         if(result.hasErrors()){
-        	return apagarConvidado(idEvento, attributes);
+//        	return apagarConvidado(idEvento, attributes);
         }
         
         if (opt.isEmpty()) {
             return "redirect:/eventos";
         }
         
-
         Evento evento = opt.get();
         convidado.setEvento(evento);
-
+        System.out.println("Criou o convidado");
+        
+        System.out.println(convidado);
         cr.save(convidado);
+        System.out.println("Salvou o convidado");
         attributes.addFlashAttribute("mensagemConvidado", "Convidado(a) adicionado(a) com sucesso!");
 
+        
+        
         return "redirect:/eventos/detalhes/" + idEvento;
     }
 
@@ -154,7 +158,7 @@ public class EventosController {
     public String apagarEvento(@PathVariable Long id, RedirectAttributes attributes) {
         Optional<Evento> opt = er.findById(id);
 
-        if (opt.isPresent()) {
+        if (!opt.isEmpty()) {
             Evento evento = opt.get();
             List<Convidado> convidados = cr.findByEvento(evento);
             cr.deleteAll(convidados);
@@ -169,7 +173,7 @@ public class EventosController {
     public String apagarConvidado(@PathVariable Long id,  RedirectAttributes attributes) {
         Optional<Convidado> opt = cr.findById(id);
 
-        if (opt.isPresent()) {
+        if (!opt.isEmpty()) {
             Convidado convidado = opt.get();
             Long idEvento = convidado.getEvento().getId();
             cr.delete(convidado);
